@@ -1,0 +1,19 @@
+POST http://localhost:8080/api/puzzle/upload HTTP/1.1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="C:\Users\Administrator.DESKTOP-98TGIBL\Downloads\output.png"
+Content-Type: image/jpeg
+
+< C:\Users\Administrator.DESKTOP-98TGIBL\Downloads\output.png
+
+
+###
+GET http://localhost:8080/images/f895d225-102c-4ac1-9087-8b69f2649172.png
+
+
+###
+GET http://localhost:8080/api/puzzle/pieces/19e6fbba-c920-4549-ba50-c1879de85bf7 HTTP/1.1
+
+###
+GET http://localhost:8080/api/puzzle/pieces/de480aea-b9b8-419b-a4f8-3416362d32ee

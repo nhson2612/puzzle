@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package puzzle;
+
+service MaskService {
+  rpc ApplyMask (MaskRequest) returns (MaskResponse);
+}
+
+message MaskRequest {
+  bytes image_data = 1;      // Ảnh gốc dạng bytes
+  repeated int32 edges = 2;  // Mảng [top, right, bottom, left]
+  int32 x = 3;              // Vị trí x
+  int32 y = 4;              // Vị trí y
+  int32 piece_size = 5;     // Kích thước mảnh ghép
+  int32 tab_size = 6;       // Kích thước tab
+}
+
+message MaskResponse {
+  bytes result_image_data = 1;  // Ảnh kết quả
+  string status = 2;
+}
