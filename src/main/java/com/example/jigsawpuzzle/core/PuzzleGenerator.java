@@ -18,11 +18,12 @@ public class PuzzleGenerator {
         this.maskApplier = new MaskApplier(grpcHost, grpcPort);
     }
 
-    public BufferedImage[] generatePieces(BufferedImage input) throws IOException {
-        EdgeMapGenerator edgeMap = new EdgeMapGenerator();
-        PuzzlePiece[][] pieces = edgeMap.generateEdges();
+    public BufferedImage[] generatePieces(BufferedImage input, int rows, int cols) throws IOException {
+        PuzzleConfig puzzleConfig = new PuzzleConfig(input.getWidth(),input.getHeight(),rows,cols);
+        EdgeMapGenerator edgeMap = new EdgeMapGenerator(puzzleConfig);
+        PuzzlePiece[][] pieces = edgeMap.generateEdges(puzzleConfig);
 
-        BufferedImage[] outputs = new BufferedImage[PuzzleConfig.PIECE_COUNT * PuzzleConfig.PIECE_COUNT];
+        BufferedImage[] outputs = new BufferedImage[puzzleConfig.ROWS * puzzleConfig.COLS];
 //        BufferedImage[] outputs = new BufferedImage[PuzzleConfig.ROWS * PuzzleConfig.COLS];
         int index = 0;
 
@@ -38,7 +39,8 @@ public class PuzzleGenerator {
                         imageBytes,
                         mask,
                         piece.x,
-                        piece.y
+                        piece.y,
+                        puzzleConfig
                 );
                 outputs[index++] = ImageIO.read(new ByteArrayInputStream(resultBytes));
             }
