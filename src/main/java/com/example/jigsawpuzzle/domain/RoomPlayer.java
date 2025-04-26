@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 @Entity
 public class RoomPlayer {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

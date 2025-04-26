@@ -7,6 +7,37 @@ Content-Type: image/jpeg
 
 < C:\Users\Administrator.DESKTOP-98TGIBL\Downloads\output.png
 
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="rows"
+
+5
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="cols"
+
+5
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### REQUEST WITH ROWS AND COLS
+POST http://localhost:8080/api/puzzle/upload HTTP/1.1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="C:\Users\Administrator.DESKTOP-98TGIBL\Pictures\lgbt.jpg"
+Content-Type: image/png
+
+< C:\Users\Administrator.DESKTOP-98TGIBL\Pictures\lgbt.jpg
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="rows"
+
+5
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="cols"
+
+5
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+
 
 ###
 GET http://localhost:8080/images/f895d225-102c-4ac1-9087-8b69f2649172.png

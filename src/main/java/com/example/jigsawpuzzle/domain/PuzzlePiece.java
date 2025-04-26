@@ -7,10 +7,19 @@ public class PuzzlePiece {
     private Position correctPosition;
     private Position currentPosition;
     private Boolean isPlacedCorrectly;
-    private User heldBy;
+    private Long heldBy;
 
-    @PostConstruct
-    public void checkPlacement() {
+    public void updatePosition(Position newPosition) {
+        this.currentPosition = newPosition;
         this.isPlacedCorrectly = correctPosition.equals(currentPosition);
+    }
+    public boolean isLocked() {
+        return this.heldBy != null;
+    }
+    public void lock(Long userId) {
+        this.heldBy = userId;
+    }
+    public void release() {
+        this.heldBy = null;
     }
 }

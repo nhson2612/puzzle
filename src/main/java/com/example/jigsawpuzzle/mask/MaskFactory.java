@@ -1,6 +1,5 @@
 package com.example.jigsawpuzzle.mask;
 
-import com.example.jigsawpuzzle.config.PuzzleConfig;
 import com.example.jigsawpuzzle.core.PuzzlePiece;
 
 import java.util.List;
@@ -18,13 +17,13 @@ public class MaskFactory {
     }
 
     // Phương thức mới để tạo mask chi tiết hơn
-    public static List<Integer> createDetailedMask(PuzzlePiece piece) {
-        // Tạo mask chi tiết với nhiều thông số hơn
-        return List.of(
-                piece.top, piece.right, piece.bottom, piece.left,
-                PuzzleConfig.PIECE_SIZE,
-                PuzzleConfig.TAB_SIZE,
-                piece.x, piece.y
-        );
-    }
+//    public static List<Integer> createDetailedMask(PuzzlePiece piece) {
+//        // Tạo mask chi tiết với nhiều thông số hơn
+//        return List.of(
+//                piece.top, piece.right, piece.bottom, piece.left,
+//                puz.PIECE_SIZE,
+//                PuzzleConfig.TAB_SIZE,
+//                piece.x, piece.y
+//        );
+//    }
 }

@@ -1,8 +1,6 @@
 package com.example.jigsawpuzzle.services;
 
-import com.example.jigsawpuzzle.config.PuzzleConfig;
 import com.example.jigsawpuzzle.core.PuzzleGenerator;
-import com.example.jigsawpuzzle.mask.MaskApplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -11,13 +9,11 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,7 +37,7 @@ public class PuzzleService {
      * @param imageUrl URL của ảnh đã tải lên
      * @return Danh sách URL của các mảnh ghép
      */
-    public List<String> generatePuzzlePieces(String imageUrl) throws IOException {
+    public List<String> generatePuzzlePieces(String imageUrl,int rows, int cols) throws IOException {
         // Tải ảnh từ URL
         byte[] imageBytes = imageService.getImageBytes(imageUrl);
         BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
@@ -57,7 +53,7 @@ public class PuzzleService {
 
         // Tạo các mảnh ghép puzzle
         PuzzleGenerator generator = new PuzzleGenerator(grpcHost, grpcPort);
-        BufferedImage[] puzzlePieces = generator.generatePieces(originalImage);
+        BufferedImage[] puzzlePieces = generator.generatePieces(originalImage,rows,cols);
         List<String> pieceUrls = new ArrayList<>();
 
         // Lưu từng mảnh ghép

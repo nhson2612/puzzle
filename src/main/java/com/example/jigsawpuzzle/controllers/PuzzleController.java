@@ -1,5 +1,6 @@
 package com.example.jigsawpuzzle.controllers;
 
+import com.example.jigsawpuzzle.core.ImageResizer;
 import com.example.jigsawpuzzle.services.ImageService;
 import com.example.jigsawpuzzle.services.PuzzleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +23,21 @@ public class PuzzleController {
 
     @Autowired
     private PuzzleService puzzleService;
+    private final ImageResizer imageResizer;
+
+    public PuzzleController(ImageResizer imageResizer) {
+        this.imageResizer = imageResizer;
+    }
 
     @PostMapping("/upload")
-    public ResponseEntity<Map<String, Object>> uploadImage(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<Map<String, Object>> uploadImage(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("rows") int rows,
+            @RequestParam("cols") int cols  ) {
         try {
-            String imageUrl = imageService.saveImage(file);
-            List<String> puzzlePieceUrls = puzzleService.generatePuzzlePieces(imageUrl);
+            MultipartFile resizeImage = imageResizer.resizeImage(file,rows,cols);
+            String imageUrl = imageService.saveImage(resizeImage);
+            List<String> puzzlePieceUrls = puzzleService.generatePuzzlePieces(imageUrl,rows,cols);
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("message", "Đã tạo puzzle thành công");

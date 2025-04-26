@@ -1,6 +1,5 @@
 package com.example.jigsawpuzzle.core;
 
-import com.example.jigsawpuzzle.config.PuzzleConfig;
 import com.example.jigsawpuzzle.mask.MaskApplier;
 import com.example.jigsawpuzzle.mask.MaskFactory;
 

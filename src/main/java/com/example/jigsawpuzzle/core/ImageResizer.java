@@ -8,69 +8,53 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class ImageResizer {
 
-    private List<Integer> ranges = List.of(60, 50, 40, 30);
+    private static final Map<Integer,Integer> EDGE_SIZES = Map.of(
+        5,160,
+            6,133,
+            7,113,
+            8,100,
+            10,80,
+            12,66,
+            15,53,
+            16,50,
+            20,40
+    );
 
     public MultipartFile resizeImage(MultipartFile file, int rows, int cols) throws IOException {
+        // Input validation
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("File không được null hoặc rỗng.");
+        }
+        if (rows <= 0 || cols <= 0) {
+            throw new IllegalArgumentException("Rows và cols phải lớn hơn 0.");
+        }
         BufferedImage inputImage = ImageIO.read(file.getInputStream());
         if (inputImage == null) {
             throw new IOException("Không thể đọc ảnh đầu vào.");
         }
 
-        int bestRange = ranges.get(0);
-        int minDifference = Integer.MAX_VALUE;
-        for (int range : ranges) {
-            int calculatedWidth = cols * range;
-            int calculatedHeight = rows * range;
-            int widthDifference = Math.abs(calculatedWidth - inputImage.getWidth());
-            int heightDifference = Math.abs(calculatedHeight - inputImage.getHeight());
-            int totalDifference = widthDifference + heightDifference;
-            if (totalDifference < minDifference) {
-                minDifference = totalDifference;
-                bestRange = range;
-            }
+        Integer edgeSize = EDGE_SIZES.get(cols);
+        if (edgeSize == null) {
+            throw new IllegalArgumentException("Không tìm thấy kích thước mảnh phù hợp cho cols = " + cols);
         }
 
-        int targetWidth = cols * bestRange;
-        int targetHeight = rows * bestRange;
+        int newWidth = edgeSize * cols;
+        int newHeight = edgeSize * rows;
+        Image scaledImage = inputImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+        BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
 
-        // Calculate scaling to preserve aspect ratio
-        double widthRatio = (double) targetWidth / inputImage.getWidth();
-        double heightRatio = (double) targetHeight / inputImage.getHeight();
-        double scale = Math.min(widthRatio, heightRatio);
-
-        int scaledWidth = (int) (inputImage.getWidth() * scale);
-        int scaledHeight = (int) (inputImage.getHeight() * scale);
-
-        // Resize while preserving aspect ratio
-        BufferedImage resizedImage = resizeAndSaveImage(inputImage, scaledWidth, scaledHeight);
-
-        // Create a new image with exact target dimensions, centering the resized image
-        BufferedImage finalImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = finalImage.createGraphics();
-        g2d.setColor(new Color(0, 0, 0, 0)); // Transparent background
-        g2d.fillRect(0, 0, targetWidth, targetHeight);
-        int xOffset = (targetWidth - scaledWidth) / 2;
-        int yOffset = (targetHeight - scaledHeight) / 2;
-        g2d.drawImage(resizedImage, xOffset, yOffset, scaledWidth, scaledHeight, null);
-        g2d.dispose();
-
-        return convertBufferedImageToMultipartFile(finalImage);
-    }
-
-    private BufferedImage resizeAndSaveImage(BufferedImage inputImage, int width, int height) {
-        BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = resizedImage.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.drawImage(inputImage, 0, 0, width, height, null);
+        g2d.drawImage(scaledImage, 0, 0, null);
         g2d.dispose();
-        return resizedImage;
+
+        return convertBufferedImageToMultipartFile(resizedImage);
     }
+
 
     private MultipartFile convertBufferedImageToMultipartFile(BufferedImage image) throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {

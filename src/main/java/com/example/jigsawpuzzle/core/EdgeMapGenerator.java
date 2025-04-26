@@ -1,7 +1,5 @@
 package com.example.jigsawpuzzle.core;
 
-import com.example.jigsawpuzzle.config.PuzzleConfig;
-
 import java.util.Random;
 
 public class EdgeMapGenerator {
