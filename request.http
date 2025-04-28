@@ -48,3 +48,39 @@ GET http://localhost:8080/api/puzzle/pieces/19e6fbba-c920-4549-ba50-c1879de85bf7
 
 ###
 GET http://localhost:8080/api/puzzle/pieces/de480aea-b9b8-419b-a4f8-3416362d32ee
+
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+  "username" : "nhson26122004",
+  "password" : "********",
+  "email" : "johndoe@gmail.com"
+}
+
+<> 2025-04-28T171651.200.json
+
+###
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "nhson26122004",
+  "password": "********"
+}
+
+###
+POST http://localhost:8080/api/room
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1Iiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc0NTgzNTQxMSwiZXhwIjoxNzQ1OTIxODExfQ.c4JQ51huCRZmfXUOZZ_1KuHqB_fYnHa1WlFjnHh6cH4
+
+{
+  "roomName": "Room Puzzle",
+  "maxPlayers": 2,
+  "mode": "ONEVSONE",
+  "duration": 100,
+  "imageId": "bc2f4f0a-c41e-4d4f-ad68-a77de88be5b3.png",
+  "pass": "son12345",
+  "cols": 10,
+  "rows": 10
+}

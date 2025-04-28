@@ -3,6 +3,7 @@ package com.example.jigsawpuzzle.domain;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "room_players")
 public class RoomPlayer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

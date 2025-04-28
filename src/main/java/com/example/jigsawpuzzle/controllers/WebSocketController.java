@@ -1,4 +1,4 @@
-package com.example.jigsawpuzzle.controller;
+package com.example.jigsawpuzzle.controllers;
 
 import com.example.jigsawpuzzle.domain.PuzzlePiece;
 import com.example.jigsawpuzzle.dto.*;
@@ -66,7 +66,6 @@ public class WebSocketController {
     @SendTo("/topic/match/{matchId}/sync")
     public SyncStateEvent syncState(@DestinationVariable Long matchId) {
         log.info("Syncing match state for matchId: {}", matchId);
-
         List<PuzzlePiece> currentPieces = puzzlePieceFactory.getCurrentPieces(matchId);
         return new SyncStateEvent(matchId, currentPieces);
     }

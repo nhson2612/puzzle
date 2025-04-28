@@ -1,6 +1,8 @@
 package com.example.jigsawpuzzle.services;
 
 import com.example.jigsawpuzzle.core.PuzzleGenerator;
+import com.example.jigsawpuzzle.domain.Puzzle;
+import com.example.jigsawpuzzle.repositories.PuzzleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,48 +33,43 @@ public class PuzzleService {
 
     @Autowired
     private ImageService imageService;
+    private final PuzzleRepository puzzleRepository;
+
+    public PuzzleService(PuzzleRepository puzzleRepository) {
+        this.puzzleRepository = puzzleRepository;
+    }
 
     /**
      * Tạo các mảnh ghép puzzle từ ảnh đã tải lên
-     * @param imageUrl URL của ảnh đã tải lên
+     * @param :_ URL của ảnh đã tải lên
      * @return Danh sách URL của các mảnh ghép
      */
-    public List<String> generatePuzzlePieces(String imageUrl,int rows, int cols) throws IOException {
-        // Tải ảnh từ URL
-        byte[] imageBytes = imageService.getImageBytes(imageUrl);
+    public List<String> generatePuzzlePieces(byte[] imageBytes,String fileName,int rows, int cols) throws IOException {
         BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
-
         // Tạo ID duy nhất cho bộ puzzle này
-        String puzzleId = UUID.randomUUID().toString();
+        String puzzleId = fileName == null ? UUID.randomUUID().toString() : fileName;
         String puzzleDir = storagePath + "/" + puzzleId;
         Files.createDirectories(Paths.get(puzzleDir));
-
         // Lưu ảnh gốc
         Path originalPath = Paths.get(puzzleDir, "original.png");
         ImageIO.write(originalImage, "png", originalPath.toFile());
-
         // Tạo các mảnh ghép puzzle
         PuzzleGenerator generator = new PuzzleGenerator(grpcHost, grpcPort);
         BufferedImage[] puzzlePieces = generator.generatePieces(originalImage,rows,cols);
         List<String> pieceUrls = new ArrayList<>();
-
         // Lưu từng mảnh ghép
         for (int i = 0; i < puzzlePieces.length; i++) {
             String pieceFilename = String.format("piece_%d.png", i);
             Path piecePath = Paths.get(puzzleDir, pieceFilename);
-
             // Chuyển BufferedImage thành byte array
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(puzzlePieces[i], "png", baos);
             byte[] pieceBytes = baos.toByteArray();
-
             // Lưu file
             Files.write(piecePath, pieceBytes);
-
             // Thêm URL vào danh sách kết quả
             pieceUrls.add("/puzzles/" + puzzleId + "/" + pieceFilename);
         }
-
         return pieceUrls;
     }
     public List<String> getPuzzlePiecesByImageId(String imageId) throws IOException {
@@ -80,14 +77,12 @@ public class PuzzleService {
         if (!Files.exists(puzzleDir)) {
             throw new IOException("Puzzle not found with ID: " + imageId);
         }
-
         List<String> pieceUrls = new ArrayList<>();
         Files.list(puzzleDir)
                 .filter(path -> path.getFileName().toString().startsWith("piece_"))
                 .forEach(path -> {
                     pieceUrls.add("/puzzles/" + imageId + "/" + path.getFileName().toString());
                 });
-
         return pieceUrls;
     }
     public byte[] getPreviewImage(String imageId) throws IOException {
@@ -95,7 +90,6 @@ public class PuzzleService {
         if (!Files.exists(previewPath)) {
             throw new IOException("Preview image not found for puzzle ID: " + imageId);
         }
-
         return Files.readAllBytes(previewPath);
     }
     public byte[] getPuzzlePiece(String puzzleId, String pieceFilename) throws IOException {
@@ -103,7 +97,10 @@ public class PuzzleService {
         if (!Files.exists(piecePath)) {
             throw new IOException("Puzzle piece not found: " + pieceFilename);
         }
-
         return Files.readAllBytes(piecePath);
+    }
+    public Puzzle getPuzzleByMatchId(Long matchId) {
+        return puzzleRepository.findPuzzleById(matchId)
+                .orElseThrow(() -> new IllegalArgumentException("No puzzle found for matchId: " + matchId));
     }
 }

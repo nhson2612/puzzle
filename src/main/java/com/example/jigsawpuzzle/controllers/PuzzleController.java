@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/puzzle")
@@ -35,9 +36,10 @@ public class PuzzleController {
             @RequestParam("rows") int rows,
             @RequestParam("cols") int cols  ) {
         try {
-            MultipartFile resizeImage = imageResizer.resizeImage(file,rows,cols);
-            String imageUrl = imageService.saveImage(resizeImage);
-            List<String> puzzlePieceUrls = puzzleService.generatePuzzlePieces(imageUrl,rows,cols);
+            String fileName = UUID.randomUUID().toString();
+            String imageUrl = imageService.saveImage(file.getBytes(),fileName);
+            byte[] resizeImage = imageResizer.resizeImage(file.getBytes(), rows, cols);
+            List<String> puzzlePieceUrls = puzzleService.generatePuzzlePieces(resizeImage,fileName,rows,cols);
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("message", "Đã tạo puzzle thành công");
