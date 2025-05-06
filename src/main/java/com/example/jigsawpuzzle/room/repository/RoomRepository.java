@@ -27,8 +27,14 @@ public interface RoomRepository extends JpaRepository<Room,Long> {
         int updateRoomStatusById(@Param("roomId") Long roomId, @Param("status") RoomStatus status);
         @Query("SELECT COUNT(rp) FROM RoomPlayer rp WHERE rp.room.id = :roomId")
         int countPlayersInRoom(@Param("roomId") Long roomId);
-        @Query("SELECT r FROM Room r LEFT JOIN FETCH r.currentMatch WHERE r.id = :roomId")
-        Optional<Room> findByIdWithCurrentMatch(@Param("roomId") Long roomId);
+        @Query("""
+        SELECT r FROM Room r
+        LEFT JOIN FETCH r.currentMatch cm
+        LEFT JOIN FETCH r.roomPlayers rp
+        LEFT JOIN FETCH rp.user
+        WHERE r.id = :roomId
+    """)
+        Optional<Room> findByIdWithCurrentMatchAndPlayers(@Param("roomId") Long roomId);
         @Query("SELECT COUNT(rp) FROM RoomPlayer rp WHERE rp.room.id = :roomId AND rp.isReady = true")
         int countReadyPlayersInRoom(@Param("roomId") Long roomId);
         @Query("SELECT r FROM Room r LEFT JOIN FETCH r.roomPlayers WHERE r.id = :roomId")

@@ -121,4 +121,9 @@ son12345
 
 ### READY
 PATCH http://localhost:8080/api/rooms/12/ready
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc0NjUxODAxNCwiZXhwIjoxNzQ2NjA0NDE0fQ.3qSN2ZU_Fxksa1-C_ZqxTqC_eQiNEk7s0kiva88DPkw
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc0NjQ1MzMwOSwiZXhwIjoxNzQ2NTM5NzA5fQ.L7s8fV2JkNPd0qst1-fQLTkB5GiN-6ObVVljUok6L2w
+
+
+### EXIT
+PATCH http://localhost:8080/api/rooms/12/exit
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc0NjQ1MzMwOSwiZXhwIjoxNzQ2NTM5NzA5fQ.L7s8fV2JkNPd0qst1-fQLTkB5GiN-6ObVVljUok6L2w

@@ -86,7 +86,7 @@ public class RoomService {
         return new RoomResponse(room);
     }
     public void startRoom(Long roomId, RoomRequest roomRequest) throws IOException {
-        Room room = roomRepository.findByIdWithCurrentMatch(roomId)
+        Room room = roomRepository.findByIdWithCurrentMatchAndPlayers(roomId)
                 .orElseThrow(() -> new EntityNotFoundException("Room not found with ID: " + roomId));
         Match currentMatch = room.getCurrentMatch();
 
@@ -115,6 +115,7 @@ public class RoomService {
     }
     public void exitRoom(Long roomId, Authentication authentication) {
         Long userId = Long.valueOf(authentication.getName());
+        ensureUserNotInActiveMatch(userId);
         Room room = roomRepository.findByIdWithPlayers(roomId)
                 .orElseThrow(() -> new EntityNotFoundException("Room not found with ID: " + roomId));
         RoomPlayer player = room.getRoomPlayers().stream()
@@ -154,6 +155,12 @@ public class RoomService {
         roomPlayerRepository.findByUser_Id(userId).ifPresent(player -> {
             throw new IllegalStateException("User is already in another room");
         });
+    }
+    private void ensureUserNotInActiveMatch(Long userId){
+        List<Long> activeMatches = matchRepository.findActiveMatchesByUserId(userId);
+        if (!activeMatches.isEmpty()) {
+            throw new IllegalStateException("User is already in an active match. Active matches: " + activeMatches);
+        }
     }
 
     private Room getFullRoomByIdOrThrow(Long roomId) {

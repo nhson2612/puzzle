@@ -1,4 +1,4 @@
-package com.example.jigsawpuzzle.mask;
+package com.example.jigsawpuzzle.core.mask;
 
 import com.example.jigsawpuzzle.core.PuzzleConfig;
 import io.grpc.ManagedChannel;

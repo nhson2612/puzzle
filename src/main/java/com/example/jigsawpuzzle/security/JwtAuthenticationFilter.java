@@ -38,7 +38,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 "/api/auth/update-password",
                 "/api/auth/reset-password"
         );
-
         String path = request.getRequestURI();
         return excludedUrls.contains(path);
     }

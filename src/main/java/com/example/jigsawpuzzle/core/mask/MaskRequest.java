@@ -1,4 +1,4 @@
-package com.example.jigsawpuzzle.core;
+package com.example.jigsawpuzzle.core.mask;
 
 import com.google.protobuf.ByteString;
 import java.util.List;
