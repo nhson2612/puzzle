@@ -1,7 +1,7 @@
 package com.example.jigsawpuzzle.security;
 
 import com.example.jigsawpuzzle.domain.User;
-import com.example.jigsawpuzzle.repositories.UserRepository;
+import com.example.jigsawpuzzle.auth.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;

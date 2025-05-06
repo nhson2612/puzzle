@@ -14,7 +14,6 @@ import java.util.List;
 public class JwtAuthenticationConverter implements AuthenticationConverter {
     private final TokenProvider tokenProvider;
     private final BlacklistTokenManager blacklistTokenManager;
-
     public JwtAuthenticationConverter(TokenProvider tokenProvider, BlacklistTokenManager blacklistTokenManager) {
         this.tokenProvider = tokenProvider;
         this.blacklistTokenManager = blacklistTokenManager;

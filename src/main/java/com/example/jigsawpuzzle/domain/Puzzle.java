@@ -3,15 +3,14 @@ package com.example.jigsawpuzzle.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.validator.constraints.Range;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "puzzles")
 @Builder
 @AllArgsConstructor
@@ -22,8 +21,8 @@ public class Puzzle {
     @Column(nullable = false)
     private String originalImageUrl;
     private String title;
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by_id", nullable = false, unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by_id", nullable = false)
     private User createdBy;
     private LocalDateTime createdAt;
     @Min(1)

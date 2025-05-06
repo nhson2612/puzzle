@@ -1,0 +1,124 @@
+package com.example.jigsawpuzzle.puzzle.service;
+
+import com.example.jigsawpuzzle.core.PuzzleGenerator;
+import com.example.jigsawpuzzle.domain.Puzzle;
+import com.example.jigsawpuzzle.domain.User;
+import com.example.jigsawpuzzle.puzzle.repository.PuzzleRepository;
+import com.example.jigsawpuzzle.core.ImageService;
+import com.example.jigsawpuzzle.room.dto.RoomRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class PuzzleService {
+
+    @Value("${puzzle.grpc.host:localhost}")
+    private String grpcHost;
+
+    @Value("${puzzle.grpc.port:50051}")
+    private int grpcPort;
+
+    @Value("${puzzle.storage.path:./uploads/puzzles}")
+    private String storagePath;
+
+    @Autowired
+    private ImageService imageService;
+    private final PuzzleRepository puzzleRepository;
+
+    public PuzzleService(PuzzleRepository puzzleRepository) {
+        this.puzzleRepository = puzzleRepository;
+    }
+
+    /**
+     * Tạo các mảnh ghép puzzle từ ảnh đã tải lên
+     * @param :_ URL của ảnh đã tải lên
+     * @return Danh sách URL của các mảnh ghép
+     */
+    public List<String> generatePuzzlePieces(byte[] imageBytes,String fileName,int rows, int cols) throws IOException {
+        BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
+        // Tạo ID duy nhất cho bộ puzzle này
+        String puzzleId = fileName == null ? UUID.randomUUID().toString() : fileName;
+        String puzzleDir = storagePath + "/" + puzzleId;
+        Files.createDirectories(Paths.get(puzzleDir));
+        // Lưu ảnh gốc
+        Path originalPath = Paths.get(puzzleDir, "original.png");
+        ImageIO.write(originalImage, "png", originalPath.toFile());
+        // Tạo các mảnh ghép puzzle
+        PuzzleGenerator generator = new PuzzleGenerator(grpcHost, grpcPort);
+        BufferedImage[] puzzlePieces = generator.generatePieces(originalImage,rows,cols);
+        List<String> pieceUrls = new ArrayList<>();
+        // Lưu từng mảnh ghép
+        for (int i = 0; i < puzzlePieces.length; i++) {
+            String pieceFilename = String.format("piece_%d.png", i);
+            Path piecePath = Paths.get(puzzleDir, pieceFilename);
+            // Chuyển BufferedImage thành byte array
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(puzzlePieces[i], "png", baos);
+            byte[] pieceBytes = baos.toByteArray();
+            // Lưu file
+            Files.write(piecePath, pieceBytes);
+            // Thêm URL vào danh sách kết quả
+            pieceUrls.add("/puzzles/" + puzzleId + "/" + pieceFilename);
+        }
+        return pieceUrls;
+    }
+    public List<String> getPuzzlePiecesByImageId(String imageId) throws IOException {
+        Path puzzleDir = Paths.get(storagePath, imageId);
+        if (!Files.exists(puzzleDir)) {
+            throw new IOException("Puzzle not found with ID: " + imageId);
+        }
+        List<String> pieceUrls = new ArrayList<>();
+        Files.list(puzzleDir)
+                .filter(path -> path.getFileName().toString().startsWith("piece_"))
+                .forEach(path -> {
+                    pieceUrls.add("/puzzles/" + imageId + "/" + path.getFileName().toString());
+                });
+        return pieceUrls;
+    }
+    public byte[] getPreviewImage(String imageId) throws IOException {
+        Path previewPath = Paths.get(storagePath, imageId, "preview.png");
+        if (!Files.exists(previewPath)) {
+            throw new IOException("Preview image not found for puzzle ID: " + imageId);
+        }
+        return Files.readAllBytes(previewPath);
+    }
+    public byte[] getPuzzlePiece(String puzzleId, String pieceFilename) throws IOException {
+        Path piecePath = Paths.get(storagePath, puzzleId, pieceFilename);
+        if (!Files.exists(piecePath)) {
+            throw new IOException("Puzzle piece not found: " + pieceFilename);
+        }
+        return Files.readAllBytes(piecePath);
+    }
+    public Puzzle getPuzzleByMatchId(Long matchId) {
+        return puzzleRepository.findPuzzleById(matchId)
+                .orElseThrow(() -> new IllegalArgumentException("No puzzle found for matchId: " + matchId));
+    }
+    public Puzzle createAndSaveInitialPuzzle(String imageUrl, User host, RoomRequest request) {
+        Puzzle puzzle = Puzzle.builder()
+                .title(null)
+//                .originalImageUrl(puzzlePieceUrls.replaceAll("piece_\\d+\\.png", "original.png"))
+                .originalImageUrl(imageUrl)
+                .createdBy(host)
+                .createdAt(LocalDateTime.now())
+                .numberOfPieces(request.cols() * request.rows())
+                .rowCount(request.rows())
+                .colCount(request.cols())
+                .build();
+        return puzzleRepository.save(puzzle);
+    }
+
+}

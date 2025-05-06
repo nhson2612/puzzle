@@ -19,6 +19,7 @@ public class FilterChainConfig {
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -27,7 +28,11 @@ public class FilterChainConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/forgot-password", "/api/auth/update-password", "/api/auth2","/api/auth/reset-password").permitAll() // Public endpoints
+                        .requestMatchers("/ws/**", "/ws", "/socket/**", "/socket",
+                                "/match/**","/topic/**","/queue/**","/exchange/**",
+                                "/api/auth/register", "/api/auth/login",
+                                "/api/auth/forgot-password", "/api/auth/update-password",
+                                "/api/auth2", "/api/auth/reset-password").permitAll() // Public endpoints
                         .requestMatchers("/hello").hasAuthority("ROLE_USER")
                         .anyRequest().authenticated()
                 )
@@ -36,10 +41,11 @@ public class FilterChainConfig {
 
         return http.build();
     }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5500"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "*"));
         configuration.setAllowCredentials(true);

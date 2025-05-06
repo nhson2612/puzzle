@@ -30,6 +30,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         List<String> excludedUrls = List.of(
+                "/ws/**", "/ws", "/socket/**", "/socket",
+                "/match/**","/topic/**","/queue/**","/exchange/**",
                 "/api/auth/register",
                 "/api/auth/login",
                 "/api/auth/forgot-password",

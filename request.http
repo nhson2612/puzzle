@@ -1,4 +1,5 @@
-POST http://localhost:8080/api/puzzle/upload HTTP/1.1
+POST http://localhost:8080/api/puzzles/upload HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc0NjQ1MjEzNiwiZXhwIjoxNzQ2NTM4NTM2fQ.fXdQSZ4nkIXBeEasy23xAlrwqNvkayfxePmTOaixDwM
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
@@ -49,18 +50,23 @@ GET http://localhost:8080/api/puzzle/pieces/19e6fbba-c920-4549-ba50-c1879de85bf7
 ###
 GET http://localhost:8080/api/puzzle/pieces/de480aea-b9b8-419b-a4f8-3416362d32ee
 
-POST http://localhost:8080/auth/register
+### GET PIECE VIA LINK
+GET http://localhost:8080/puzzles/bb2f9b3a-b565-4fb4-8ad9-0008e3505d67/piece_0.png
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc0NjQ1MzMwOSwiZXhwIjoxNzQ2NTM5NzA5fQ.L7s8fV2JkNPd0qst1-fQLTkB5GiN-6ObVVljUok6L2w
+
+### REGISTER
+POST http://localhost:8080/api/auth/register
 Content-Type: application/json
 
 {
-  "username" : "nhson26122004",
+  "username" : "nhhieu26122004",
   "password" : "********",
-  "email" : "johndoe@gmail.com"
+  "email" : "janedoe@gmail.com"
 }
 
 <> 2025-04-28T171651.200.json
 
-###
+### LOGIN
 POST http://localhost:8080/api/auth/login
 Content-Type: application/json
 
@@ -69,18 +75,50 @@ Content-Type: application/json
   "password": "********"
 }
 
-###
-POST http://localhost:8080/api/room
+### CREATE ROOM
+POST http://localhost:8080/api/rooms
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1Iiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc0NTgzNTQxMSwiZXhwIjoxNzQ1OTIxODExfQ.c4JQ51huCRZmfXUOZZ_1KuHqB_fYnHa1WlFjnHh6cH4
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc0NjQ1MzMwOSwiZXhwIjoxNzQ2NTM5NzA5fQ.L7s8fV2JkNPd0qst1-fQLTkB5GiN-6ObVVljUok6L2w
 
 {
   "roomName": "Room Puzzle",
   "maxPlayers": 2,
   "mode": "ONEVSONE",
   "duration": 100,
-  "imageId": "bc2f4f0a-c41e-4d4f-ad68-a77de88be5b3.png",
+  "imageId": "e96e0d21-a123-4bcb-85c0-8a398795dc47",
   "pass": "son12345",
   "cols": 10,
   "rows": 10
 }
+
+### GET ALL ROOM
+GET http://localhost:8080/api/rooms
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc0NjQ1MzMwOSwiZXhwIjoxNzQ2NTM5NzA5fQ.L7s8fV2JkNPd0qst1-fQLTkB5GiN-6ObVVljUok6L2w
+
+
+### START ROOM
+POST http://localhost:8080/api/rooms/12/start
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc0NjQ1MzMwOSwiZXhwIjoxNzQ2NTM5NzA5fQ.L7s8fV2JkNPd0qst1-fQLTkB5GiN-6ObVVljUok6L2w
+Content-Type: application/json
+
+{
+  "rows": 10,
+  "cols": 10,
+  "pass": "",
+  "imageId": "e96e0d21-a123-4bcb-85c0-8a398795dc47.png",
+  "duration": 10,
+  "mode": "TEAM",
+  "maxPlayers": 2,
+  "roomName": "Room Puzzle"
+}
+
+### ENTER ROOM
+POST http://localhost:8080/api/rooms/12/enter
+Content-Type: text/plain
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc0NjUxODAxNCwiZXhwIjoxNzQ2NjA0NDE0fQ.3qSN2ZU_Fxksa1-C_ZqxTqC_eQiNEk7s0kiva88DPkw
+
+son12345
+
+### READY
+PATCH http://localhost:8080/api/rooms/12/ready
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc0NjUxODAxNCwiZXhwIjoxNzQ2NjA0NDE0fQ.3qSN2ZU_Fxksa1-C_ZqxTqC_eQiNEk7s0kiva88DPkw

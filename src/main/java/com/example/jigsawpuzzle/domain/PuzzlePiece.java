@@ -1,8 +1,10 @@
 package com.example.jigsawpuzzle.domain;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Setter
+@Getter
 public class PuzzlePiece {
     private Long id;
     private String imageUrl;

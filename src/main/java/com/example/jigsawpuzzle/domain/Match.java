@@ -1,9 +1,8 @@
 package com.example.jigsawpuzzle.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,9 +10,10 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "matches")
-@Builder
+@Getter
+@Setter
 @AllArgsConstructor
-@Data
+@Builder
 public class Match {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,8 +22,9 @@ public class Match {
     private LocalDateTime endedAt;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false)
+    @JsonBackReference
     private Room room;
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinTable(
             name = "match_players",
             joinColumns = @JoinColumn(name = "match_id"),
@@ -37,6 +38,8 @@ public class Match {
     private MatchResult result;
     @Enumerated(EnumType.STRING)
     private MatchMode mode;
+    @Enumerated(EnumType.STRING)
+    private MatchStatus status;
     public Match() {
 
     }

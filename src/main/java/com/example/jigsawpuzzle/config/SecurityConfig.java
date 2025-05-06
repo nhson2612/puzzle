@@ -1,6 +1,6 @@
 package com.example.jigsawpuzzle.config;
 
-import com.example.jigsawpuzzle.repositories.UserRepository;
+import com.example.jigsawpuzzle.auth.repository.UserRepository;
 import com.example.jigsawpuzzle.security.JwtAuthenticationConverter;
 import com.example.jigsawpuzzle.security.JwtAuthenticationFilter;
 import com.example.jigsawpuzzle.security.JwtAuthenticationProvider;

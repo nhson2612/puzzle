@@ -2,10 +2,7 @@ package com.example.jigsawpuzzle.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +11,8 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "users",indexes = {
         @Index(name = "idx_username", columnList = "username"),

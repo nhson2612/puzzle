@@ -10,4 +10,5 @@ public class PlayerState {
     private List<PuzzlePiece> piecesHeld;
     private Boolean isConnected;
     private LocalDateTime lastActive;
+    private List<PuzzlePiece> piecesPlacedCorrectly;
 }
