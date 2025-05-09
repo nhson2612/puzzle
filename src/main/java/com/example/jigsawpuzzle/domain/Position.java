@@ -20,4 +20,10 @@ public class Position {
         Position position = (Position) obj;
         return Objects.equals(x, position.x) && Objects.equals(y, position.y);
     }
+
+    Double distanceTo(Position droppedPosition){
+        double dx = droppedPosition.x - x;
+        double dy = droppedPosition.y - y;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
 }
