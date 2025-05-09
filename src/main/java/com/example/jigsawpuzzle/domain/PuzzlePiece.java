@@ -12,9 +12,14 @@ public class PuzzlePiece {
     private Position currentPosition;
     private Boolean isPlacedCorrectly;
     private Long heldBy;
-    public void updatePosition(Position newPosition) {
-        this.currentPosition = newPosition;
-        this.isPlacedCorrectly = correctPosition.equals(currentPosition);
+    public void updatePositionWithSnap(Position droppedPosition, double threshold) {
+        this.currentPosition = droppedPosition;
+        if (this.correctPosition.distanceTo(droppedPosition) <= threshold) {
+            this.currentPosition = this.correctPosition;
+            this.isPlacedCorrectly = true;
+        } else {
+            this.isPlacedCorrectly = false;
+        }
     }
     public boolean isLocked() {
         return this.heldBy != null;

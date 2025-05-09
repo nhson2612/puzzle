@@ -1,14 +1,15 @@
-package com.example.jigsawpuzzle.websocket.dto.controller;
+package com.example.jigsawpuzzle.websocket.controller;
 
 import com.example.jigsawpuzzle.domain.MatchStatus;
 import com.example.jigsawpuzzle.domain.PuzzlePiece;
+import com.example.jigsawpuzzle.puzzle.service.PuzzlePieceService;
 import com.example.jigsawpuzzle.websocket.dto.InitGameRequest;
 import com.example.jigsawpuzzle.websocket.dto.LockPieceRequest;
 import com.example.jigsawpuzzle.websocket.dto.MovePieceRequest;
 import com.example.jigsawpuzzle.websocket.dto.ReleasePieceRequest;
 import com.example.jigsawpuzzle.puzzle.factory.PuzzlePieceFactory;
 import com.example.jigsawpuzzle.match.MatchRepository;
-import com.example.jigsawpuzzle.puzzle.checker.PuzzlePieceChecker;
+import com.example.jigsawpuzzle.puzzle.checker.PuzzleChecker;
 import com.example.jigsawpuzzle.websocket.event.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -24,12 +25,14 @@ import java.util.List;
 public class WebSocketController {
 
     private final PuzzlePieceFactory puzzlePieceFactory;
-    private final PuzzlePieceChecker puzzlePieceChecker;
+    private final PuzzleChecker puzzleChecker;
+    private final PuzzlePieceService pieceService;
     private final MatchRepository matchRepository;
 
-    public WebSocketController(PuzzlePieceFactory puzzlePieceFactory, PuzzlePieceChecker puzzlePieceChecker, MatchRepository matchRepository) {
+    public WebSocketController(PuzzlePieceFactory puzzlePieceFactory, PuzzleChecker puzzleChecker, PuzzlePieceService pieceService, MatchRepository matchRepository) {
         this.puzzlePieceFactory = puzzlePieceFactory;
-        this.puzzlePieceChecker = puzzlePieceChecker;
+        this.puzzleChecker = puzzleChecker;
+        this.pieceService = pieceService;
         this.matchRepository = matchRepository;
     }
 
@@ -53,8 +56,7 @@ public class WebSocketController {
     @MessageMapping("/match/{matchId}/move")
     @SendTo("/topic/match/{matchId}/move")
     public PieceMovedEvent movePiece(@DestinationVariable Long matchId, MovePieceRequest request) {
-        boolean canMove = puzzlePieceChecker.canMove(matchId,request.pieceId(),request.userId());
-        log.info("Handle moving piece: {} (canMove: {})", request.pieceId(), canMove);
+        pieceService.movePiece(matchId,request.pieceId(),request.userId(),request.newPosition());
         return new PieceMovedEvent(matchId, request);
     }
 
@@ -62,8 +64,7 @@ public class WebSocketController {
     @MessageMapping("/match/{matchId}/lock")
     @SendTo("/topic/match/{matchId}/lock")
     public PieceLockedEvent lockPiece(@DestinationVariable Long matchId, LockPieceRequest request) {
-        boolean canLock = puzzlePieceChecker.canLock(matchId,request.pieceId(),request.userId());
-        log.info("Handle locking piece: {} (canLock: {})", request.pieceId(), canLock);
+        pieceService.lockPiece(matchId,request.pieceId(),request.userId());
         return new PieceLockedEvent(matchId, request);
     }
 
@@ -71,8 +72,7 @@ public class WebSocketController {
     @MessageMapping("/match/{matchId}/release")
     @SendTo("/topic/match/{matchId}/release")
     public PieceReleasedEvent releasePiece(@DestinationVariable Long matchId, ReleasePieceRequest request) {
-        boolean canRelease = puzzlePieceChecker.canRelease(matchId,request.pieceId(),request.userId());
-        log.info("Handle releasing piece: {} (canRelease: {})", request.pieceId(), canRelease);
+        pieceService.releaseAndCheckPosition(matchId,request.pieceId(),request.userId(),request.position());
         return new PieceReleasedEvent(matchId, request);
     }
 

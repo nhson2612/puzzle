@@ -1,4 +1,4 @@
-package com.example.jigsawpuzzle.session;
+package com.example.jigsawpuzzle.session.repository;
 
 import com.example.jigsawpuzzle.domain.GameSession;
 import org.springframework.data.jpa.repository.JpaRepository;

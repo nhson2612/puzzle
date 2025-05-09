@@ -28,7 +28,8 @@ public class FilterChainConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/ws/**", "/ws", "/socket/**", "/socket",
+                        .requestMatchers("/swagger-ui.html","/swagger-ui/**","/v3/api-docs/**",
+                                "/ws/**", "/ws", "/socket/**", "/socket",
                                 "/match/**","/topic/**","/queue/**","/exchange/**",
                                 "/api/auth/register", "/api/auth/login",
                                 "/api/auth/forgot-password", "/api/auth/update-password",

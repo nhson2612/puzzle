@@ -4,7 +4,8 @@ import com.example.jigsawpuzzle.core.ImageResizer;
 import com.example.jigsawpuzzle.domain.Position;
 import com.example.jigsawpuzzle.domain.Puzzle;
 import com.example.jigsawpuzzle.domain.PuzzlePiece;
-import com.example.jigsawpuzzle.puzzle.service.PuzzlePieceRedisService;
+import com.example.jigsawpuzzle.puzzle.repository.RedisPuzzlePieceRepository;
+import com.example.jigsawpuzzle.puzzle.service.PuzzlePieceService;
 import com.example.jigsawpuzzle.puzzle.service.PuzzleService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -18,11 +19,11 @@ public class PuzzlePieceFactory {
 
     @Value("${puzzle.storage.path:./uploads/puzzles}")
     private String storagePath;
-    private final PuzzlePieceRedisService puzzlePieceRedisService;
+    private final RedisPuzzlePieceRepository puzzlePieceRepository;
     private final PuzzleService puzzleService;
 
-    public PuzzlePieceFactory(PuzzlePieceRedisService puzzlePieceRedisService, PuzzleService puzzleService) {
-        this.puzzlePieceRedisService = puzzlePieceRedisService;
+    public PuzzlePieceFactory(RedisPuzzlePieceRepository puzzlePieceRepository, PuzzleService puzzleService) {
+        this.puzzlePieceRepository = puzzlePieceRepository;
         this.puzzleService = puzzleService;
     }
 
@@ -62,7 +63,7 @@ public class PuzzlePieceFactory {
             pieces.add(piece);
             index++;
         }
-        puzzlePieceRedisService.savePuzzlePieces(matchId,pieces);
+        puzzlePieceRepository.saveAll(matchId,pieces);
         return pieces;
     }
 
@@ -73,7 +74,7 @@ public class PuzzlePieceFactory {
         if (puzzleId == null) {
             throw new IllegalArgumentException("No puzzle found for matchId: " + matchId);
         }
-        return puzzlePieceRedisService.getPuzzlePieces(matchId);
+        return puzzlePieceRepository.findAllByMatchId(matchId);
     }
     public static String extractPuzzleId(String url) {
         int startIdx = url.indexOf("/images/") + "/images/".length();
