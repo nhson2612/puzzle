@@ -13,9 +13,7 @@ import java.io.File;
 
 @SpringBootApplication
 public class JigsawPuzzleApplication {
-
     public static void main(String[] args) throws Exception{
         SpringApplication.run(JigsawPuzzleApplication.class, args);
     }
-
 }

@@ -1,7 +1,7 @@
 package com.example.jigsawpuzzle.core;
 
-import com.example.jigsawpuzzle.mask.MaskApplier;
-import com.example.jigsawpuzzle.mask.MaskFactory;
+import com.example.jigsawpuzzle.core.mask.MaskApplier;
+import com.example.jigsawpuzzle.core.mask.MaskFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
