@@ -1,6 +1,10 @@
 package com.example.jigsawpuzzle.domain;
 
-import jakarta.annotation.PostConstruct;
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class PuzzlePiece {
     private Long id;
     private String imageUrl;

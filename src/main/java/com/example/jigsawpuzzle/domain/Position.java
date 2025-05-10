@@ -1,13 +1,21 @@
 package com.example.jigsawpuzzle.domain;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 
-@Data
+@Setter
+@Getter
 public class Position {
     private Integer x;
     private Integer y;
+
+    public Position(Integer x, Integer y) {
+        this.x = x;
+        this.y = y;
+    }
 
     @Override
     public boolean equals(Object obj) {
